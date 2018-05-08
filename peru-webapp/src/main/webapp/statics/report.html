@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="/css/common/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <base target="_blank">
+</head>
+<body class="gray-bg">
+<script src="/js/common/jquery.min.js?v=2.1.4"></script>
+<script>
+    $.ajax({
+        type: "GET",
+        url:  "/login/check",
+        success: function(data) {
+            console.log(data);
+        } ,
+        error: function(jqXHR, textStatus, errorThrown){
+            var msg = JSON.stringify(jqXHR);
+            alert(msg);
+        }
+    });
+</script>
+<div class="wrapper-content ">
+    <div class="ibox-content">
+        <form class="form-horizontal" id="reportForm">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Facebook Accounts:</label>
+                <div class="col-sm-2">
+                    <select class="form-control" id="facebookSelect">
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Date From:</label>
+                <div class="col-sm-3">
+                    <input class="form-control layer-date" name="startTime" placeholder="YYYY-MM-DD" onclick="laydate({istime: false, format: 'YYYY-MM-DD'})">
+                    <label class="laydate-icon"></label>
+                    <select class="form-control hour">
+                        <option value="00">00</option>
+                        <option value="01">01</option>
+                        <option value="02">02</option>
+                        <option value="03">03</option>
+                        <option value="04">04</option>
+                        <option value="05">05</option>
+                        <option value="06">06</option>
+                        <option value="07">07</option>
+                        <option value="08">08</option>
+                        <option value="09">09</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Date To:</label>
+                <div class="col-sm-3">
+                    <input class="form-control layer-date" name="endTime" placeholder="YYYY-MM-DD" onclick="laydate({istime: false, format: 'YYYY-MM-DD'})">
+                    <label class="laydate-icon"></label>
+                    <select class="form-control hour">
+                        <option value="00">00</option>
+                        <option value="01">01</option>
+                        <option value="02">02</option>
+                        <option value="03">03</option>
+                        <option value="04">04</option>
+                        <option value="05">05</option>
+                        <option value="06">06</option>
+                        <option value="07">07</option>
+                        <option value="08">08</option>
+                        <option value="09">09</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="button" class="btn btn-primary" onclick="report()">Query</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+<script src="/js/report.js"></script>
+<script src="/js/layer/laydate/laydate.js"></script>
+<script src="/js/layer/layer/layer.js"></script>
+</body>
+
+</html>

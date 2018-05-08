@@ -1,0 +1,4 @@
+include 'peru-service'
+include 'peru-common'
+include 'peru-dal'
+include 'peru-webapp'

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.peru.common" />
+
+    <bean id="httpHelper" class="com.peru.common.HttpHelper"/>
+
+    <!--<bean id="redisConfig" class="redis.clients.jedis.JedisPoolConfig">-->
+        <!--<property name="maxTotal" value="300"/>-->
+        <!--<property name="maxIdle" value="50"/>-->
+        <!--<property name="maxWaitMillis" value="30000"/>-->
+        <!--<property name="testOnBorrow" value="false"/>-->
+        <!--<property name="testWhileIdle" value="true"/>-->
+        <!--<property name="timeBetweenEvictionRunsMillis" value="60000"/>-->
+        <!--<property name="minEvictableIdleTimeMillis" value="60000"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="jedisPool" class="redis.clients.jedis.JedisPool">-->
+        <!--<constructor-arg ref="redisConfig"/>-->
+        <!--<constructor-arg value="@redis.host@" type="java.lang.String"/>-->
+        <!--<constructor-arg value="@redis.port@"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="redisFactory" class="com.peru.common.RedisFactory" destroy-method="shutdown"/>-->
+    <!--<bean id="redisHelper" class="com.peru.common.RedisHelper"/>-->
+
+</beans>
