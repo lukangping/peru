@@ -36,4 +36,10 @@ public class FacebookController {
     return new DefaultServiceResult(userAccountDOs);
   }
 
+  @RequestMapping("/oauth/redirect")
+  @ResponseBody
+  public String doRedirect() {
+    return "redirect.";
+  }
+
 }

@@ -37,6 +37,7 @@
             <mvc:mapping path="/**" />
             <mvc:exclude-mapping path="/index.html" />
             <mvc:exclude-mapping path="/private.html" />
+            <mvc:exclude-mapping path="/access_token.html" />
             <mvc:exclude-mapping path="/login" />
             <mvc:exclude-mapping path="/login/check" />
             <mvc:exclude-mapping path="/js/**" />
