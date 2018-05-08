@@ -77,6 +77,7 @@ task populateProps << {
 }
 
 task localTomcatRun(dependsOn: [subprojects.clean, populateDevEnv, populateProps, ':peru-webapp:tomcatRun'])
+task prodTomcatRun(dependsOn: [subprojects.clean, populateProdEnv, populateProps, ':peru-webapp:tomcatRun'])
 task localTomcatDebug(dependsOn: [subprojects.clean, populateDevEnv, populateProps, ':peru-webapp:tomcatRunDebug'])
 
 task packageDevWar(dependsOn: [populateDevEnv, populateProps, ':peru-webapp:war'])
