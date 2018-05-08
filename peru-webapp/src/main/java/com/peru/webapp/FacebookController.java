@@ -39,6 +39,11 @@ public class FacebookController {
   @RequestMapping("/oauth/redirect")
   @ResponseBody
   public String doRedirect() {
+    try {
+      Thread.sleep(100000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     return "redirect.";
   }
 
