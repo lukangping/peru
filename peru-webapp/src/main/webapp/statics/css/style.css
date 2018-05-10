@@ -28,3 +28,18 @@
     height: 34px;
     vertical-align: text-top;
 }
+
+.navbar-head {
+    background-color: #394959;
+    border-color: #394959;
+    height: 43px;
+}
+
+.navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:focus, .navbar-inverse .navbar-nav>.active>a:hover {
+    color: #fff;
+    background-color: #394959;
+}
+
+.navbar-inverse .navbar-brand {
+    color: #fff;
+}

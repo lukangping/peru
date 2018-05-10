@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peru.dal.ReportHourlyDOMapper" >
+  <resultMap id="BaseResultMap" type="com.peru.dal.ReportHourlyDO" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="date" property="date" jdbcType="INTEGER" />
+    <result column="facebook_id" property="facebookId" jdbcType="VARCHAR" />
+    <result column="adset_id" property="adsetId" jdbcType="VARCHAR" />
+    <result column="gmv" property="gmv" jdbcType="DECIMAL" />
+    <result column="spend" property="spend" jdbcType="DECIMAL" />
+    <result column="budget" property="budget" jdbcType="DECIMAL" />
+    <result column="impressions" property="impressions" jdbcType="INTEGER" />
+    <result column="frequency" property="frequency" jdbcType="REAL" />
+    <result column="reachs" property="reachs" jdbcType="INTEGER" />
+    <result column="clicks" property="clicks" jdbcType="INTEGER" />
+    <result column="purchases" property="purchases" jdbcType="INTEGER" />
+    <result column="cost_general" property="costGeneral" jdbcType="DECIMAL" />
+    <result column="cost_purchasing" property="costPurchasing" jdbcType="DECIMAL" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, `date`, facebook_id, adset_id, gmv, spend, budget, impressions, frequency, reachs, 
+    clicks, purchases, cost_general, cost_purchasing, update_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.peru.dal.ReportHourlyDOCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from report_hourly
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from report_hourly
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from report_hourly
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.peru.dal.ReportHourlyDOCriteria" >
+    delete from report_hourly
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.peru.dal.ReportHourlyDO" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into report_hourly (`date`, facebook_id, adset_id, 
+      gmv, spend, budget, 
+      impressions, frequency, reachs, 
+      clicks, purchases, cost_general, 
+      cost_purchasing, update_time)
+    values (#{date,jdbcType=INTEGER}, #{facebookId,jdbcType=VARCHAR}, #{adsetId,jdbcType=VARCHAR}, 
+      #{gmv,jdbcType=DECIMAL}, #{spend,jdbcType=DECIMAL}, #{budget,jdbcType=DECIMAL}, 
+      #{impressions,jdbcType=INTEGER}, #{frequency,jdbcType=REAL}, #{reachs,jdbcType=INTEGER}, 
+      #{clicks,jdbcType=INTEGER}, #{purchases,jdbcType=INTEGER}, #{costGeneral,jdbcType=DECIMAL}, 
+      #{costPurchasing,jdbcType=DECIMAL}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peru.dal.ReportHourlyDO" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into report_hourly
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="date != null" >
+        `date`,
+      </if>
+      <if test="facebookId != null" >
+        facebook_id,
+      </if>
+      <if test="adsetId != null" >
+        adset_id,
+      </if>
+      <if test="gmv != null" >
+        gmv,
+      </if>
+      <if test="spend != null" >
+        spend,
+      </if>
+      <if test="budget != null" >
+        budget,
+      </if>
+      <if test="impressions != null" >
+        impressions,
+      </if>
+      <if test="frequency != null" >
+        frequency,
+      </if>
+      <if test="reachs != null" >
+        reachs,
+      </if>
+      <if test="clicks != null" >
+        clicks,
+      </if>
+      <if test="purchases != null" >
+        purchases,
+      </if>
+      <if test="costGeneral != null" >
+        cost_general,
+      </if>
+      <if test="costPurchasing != null" >
+        cost_purchasing,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="date != null" >
+        #{date,jdbcType=INTEGER},
+      </if>
+      <if test="facebookId != null" >
+        #{facebookId,jdbcType=VARCHAR},
+      </if>
+      <if test="adsetId != null" >
+        #{adsetId,jdbcType=VARCHAR},
+      </if>
+      <if test="gmv != null" >
+        #{gmv,jdbcType=DECIMAL},
+      </if>
+      <if test="spend != null" >
+        #{spend,jdbcType=DECIMAL},
+      </if>
+      <if test="budget != null" >
+        #{budget,jdbcType=DECIMAL},
+      </if>
+      <if test="impressions != null" >
+        #{impressions,jdbcType=INTEGER},
+      </if>
+      <if test="frequency != null" >
+        #{frequency,jdbcType=REAL},
+      </if>
+      <if test="reachs != null" >
+        #{reachs,jdbcType=INTEGER},
+      </if>
+      <if test="clicks != null" >
+        #{clicks,jdbcType=INTEGER},
+      </if>
+      <if test="purchases != null" >
+        #{purchases,jdbcType=INTEGER},
+      </if>
+      <if test="costGeneral != null" >
+        #{costGeneral,jdbcType=DECIMAL},
+      </if>
+      <if test="costPurchasing != null" >
+        #{costPurchasing,jdbcType=DECIMAL},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.peru.dal.ReportHourlyDOCriteria" resultType="java.lang.Integer" >
+    select count(*) from report_hourly
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update report_hourly
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.date != null" >
+        `date` = #{record.date,jdbcType=INTEGER},
+      </if>
+      <if test="record.facebookId != null" >
+        facebook_id = #{record.facebookId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.adsetId != null" >
+        adset_id = #{record.adsetId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gmv != null" >
+        gmv = #{record.gmv,jdbcType=DECIMAL},
+      </if>
+      <if test="record.spend != null" >
+        spend = #{record.spend,jdbcType=DECIMAL},
+      </if>
+      <if test="record.budget != null" >
+        budget = #{record.budget,jdbcType=DECIMAL},
+      </if>
+      <if test="record.impressions != null" >
+        impressions = #{record.impressions,jdbcType=INTEGER},
+      </if>
+      <if test="record.frequency != null" >
+        frequency = #{record.frequency,jdbcType=REAL},
+      </if>
+      <if test="record.reachs != null" >
+        reachs = #{record.reachs,jdbcType=INTEGER},
+      </if>
+      <if test="record.clicks != null" >
+        clicks = #{record.clicks,jdbcType=INTEGER},
+      </if>
+      <if test="record.purchases != null" >
+        purchases = #{record.purchases,jdbcType=INTEGER},
+      </if>
+      <if test="record.costGeneral != null" >
+        cost_general = #{record.costGeneral,jdbcType=DECIMAL},
+      </if>
+      <if test="record.costPurchasing != null" >
+        cost_purchasing = #{record.costPurchasing,jdbcType=DECIMAL},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update report_hourly
+    set id = #{record.id,jdbcType=INTEGER},
+      `date` = #{record.date,jdbcType=INTEGER},
+      facebook_id = #{record.facebookId,jdbcType=VARCHAR},
+      adset_id = #{record.adsetId,jdbcType=VARCHAR},
+      gmv = #{record.gmv,jdbcType=DECIMAL},
+      spend = #{record.spend,jdbcType=DECIMAL},
+      budget = #{record.budget,jdbcType=DECIMAL},
+      impressions = #{record.impressions,jdbcType=INTEGER},
+      frequency = #{record.frequency,jdbcType=REAL},
+      reachs = #{record.reachs,jdbcType=INTEGER},
+      clicks = #{record.clicks,jdbcType=INTEGER},
+      purchases = #{record.purchases,jdbcType=INTEGER},
+      cost_general = #{record.costGeneral,jdbcType=DECIMAL},
+      cost_purchasing = #{record.costPurchasing,jdbcType=DECIMAL},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peru.dal.ReportHourlyDO" >
+    update report_hourly
+    <set >
+      <if test="date != null" >
+        `date` = #{date,jdbcType=INTEGER},
+      </if>
+      <if test="facebookId != null" >
+        facebook_id = #{facebookId,jdbcType=VARCHAR},
+      </if>
+      <if test="adsetId != null" >
+        adset_id = #{adsetId,jdbcType=VARCHAR},
+      </if>
+      <if test="gmv != null" >
+        gmv = #{gmv,jdbcType=DECIMAL},
+      </if>
+      <if test="spend != null" >
+        spend = #{spend,jdbcType=DECIMAL},
+      </if>
+      <if test="budget != null" >
+        budget = #{budget,jdbcType=DECIMAL},
+      </if>
+      <if test="impressions != null" >
+        impressions = #{impressions,jdbcType=INTEGER},
+      </if>
+      <if test="frequency != null" >
+        frequency = #{frequency,jdbcType=REAL},
+      </if>
+      <if test="reachs != null" >
+        reachs = #{reachs,jdbcType=INTEGER},
+      </if>
+      <if test="clicks != null" >
+        clicks = #{clicks,jdbcType=INTEGER},
+      </if>
+      <if test="purchases != null" >
+        purchases = #{purchases,jdbcType=INTEGER},
+      </if>
+      <if test="costGeneral != null" >
+        cost_general = #{costGeneral,jdbcType=DECIMAL},
+      </if>
+      <if test="costPurchasing != null" >
+        cost_purchasing = #{costPurchasing,jdbcType=DECIMAL},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peru.dal.ReportHourlyDO" >
+    update report_hourly
+    set `date` = #{date,jdbcType=INTEGER},
+      facebook_id = #{facebookId,jdbcType=VARCHAR},
+      adset_id = #{adsetId,jdbcType=VARCHAR},
+      gmv = #{gmv,jdbcType=DECIMAL},
+      spend = #{spend,jdbcType=DECIMAL},
+      budget = #{budget,jdbcType=DECIMAL},
+      impressions = #{impressions,jdbcType=INTEGER},
+      frequency = #{frequency,jdbcType=REAL},
+      reachs = #{reachs,jdbcType=INTEGER},
+      clicks = #{clicks,jdbcType=INTEGER},
+      purchases = #{purchases,jdbcType=INTEGER},
+      cost_general = #{costGeneral,jdbcType=DECIMAL},
+      cost_purchasing = #{costPurchasing,jdbcType=DECIMAL},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.peru.dal.ReportHourlyDOCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from report_hourly
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+</mapper>

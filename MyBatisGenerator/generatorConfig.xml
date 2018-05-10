@@ -59,7 +59,7 @@
             <!--<generatedKey column="id" sqlStatement="MySql" identity="true" />-->
         <!--</table>-->
 
-        <table tableName="user_account" domainObjectName="UserAccountDO"
+        <table tableName="report_hourly" domainObjectName="ReportHourlyDO"
                enableCountByExample="true" enableUpdateByExample="true" enableSelectByExample="true" enableDeleteByExample="true" selectByExampleQueryId="true">
             <generatedKey column="id" sqlStatement="MySql" identity="true" />
         </table>
