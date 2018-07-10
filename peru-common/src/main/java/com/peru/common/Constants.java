@@ -10,6 +10,6 @@ public class Constants {
   public static final String HOUR_DATEFORMAT = "H";
   public static final String DEFAULT_TIMEZONE = "UTC";
 
-  public static final String SESSION_USERID = "USERID";
+  public static final String SESSION_USERID = "PERU_USERID";
 
 }

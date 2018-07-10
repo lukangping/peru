@@ -9,6 +9,8 @@ public class UserAccountDO implements Serializable {
 
     private String facebookId;
 
+    private String accessToken;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -33,5 +35,13 @@ public class UserAccountDO implements Serializable {
 
     public void setFacebookId(String facebookId) {
         this.facebookId = facebookId == null ? null : facebookId.trim();
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken == null ? null : accessToken.trim();
     }
 }

@@ -10,6 +10,9 @@ allprojects {
     apply plugin: 'idea'
     repositories {
         mavenCentral()
+        maven {
+            url "https://mvnrepository.com/artifact/com.facebook.business.sdk/facebook-java-business-sdk"
+        }
     }
 
     configurations.all {
@@ -38,6 +41,7 @@ subprojects {
         compile 'com.google.guava:guava:19.0'
         compile 'com.alibaba:fastjson:1.2.6'
         compile 'org.projectlombok:lombok:1.16.18'
+        compile 'com.facebook.business.sdk:facebook-java-business-sdk:3.0.0'
         testCompile 'org.powermock:powermock-module-junit4:1.6.2'
         testCompile 'org.powermock:powermock-api-mockito:1.6.2'
         testCompile 'org.mockito:mockito-all:1.9.5'

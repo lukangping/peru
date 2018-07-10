@@ -13,24 +13,64 @@
 <body class="gray-bg">
 <script src="/js/common/jquery.min.js?v=2.1.4"></script>
 <script src="/js/my.js"></script>
+<script>
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId      : '408674589613698',
+            cookie     : true,
+            xfbml      : true,
+            version    : 'v3.0'
+        });
+
+        FB.AppEvents.logPageView();
+
+    };
+
+    (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    function checkLoginState() {
+        FB.getLoginStatus(function(response) {
+            console.log(response);
+            console.log(response.authResponse.accessToken);
+            console.log(response.authResponse.userID);
+
+            $.get("/auth/token", {accessToken:response.authResponse.accessToken, facebookId:response.authResponse.userID})
+                    .done(function(data) {
+                console.log(data);
+            });
+
+        });
+    }
+</script>
 <div class="wrapper-content ">
-    <div class="ibox-content">
-        <form class="form-horizontal" id="reportForm">
-            <div class="form-group">
-                <label class="col-sm-2 control-label">Facebook Accounts:</label>
-                <div class="col-sm-3">
-                    <select class="form-control" id="facebookSelect">
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-7">
-                    <button type="button" class="btn btn-primary" onclick="login()">
-                        <span class="glyphicon glyphicon-plus"></span>&nbsp;Grant Facebook Access Token
-                    </button>
-                </div>
-            </div>
-        </form>
+    <!--<div class="ibox-content">-->
+        <!--<form class="form-horizontal" id="reportForm">-->
+            <!--<div class="form-group">-->
+                <!--<label class="col-sm-2 control-label">Facebook Accounts:</label>-->
+                <!--<div class="col-sm-3">-->
+                    <!--<select class="form-control" id="facebookSelect">-->
+                    <!--</select>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="form-group">-->
+                <!--<div class="col-sm-offset-2 col-sm-7">-->
+                    <!--<button type="button" class="btn btn-primary" onclick="login()">-->
+                        <!--<span class="glyphicon glyphicon-plus"></span>&nbsp;Grant Facebook Access Token-->
+                    <!--</button>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</form>-->
+    <!--</div>-->
+    <div class="fb-login-button"
+         data-max-rows="1" data-size="large" data-button-type="login_with" data-show-faces="false"
+         data-auto-logout-link="false" data-use-continue-as="true"
+         data-scope="public_profile,ads_read" data-onlogin="checkLoginState();">
     </div>
 </div>
 

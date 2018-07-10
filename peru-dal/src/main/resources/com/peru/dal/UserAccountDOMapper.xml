@@ -5,6 +5,7 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="user_id" property="userId" jdbcType="INTEGER" />
     <result column="facebook_id" property="facebookId" jdbcType="VARCHAR" />
+    <result column="access_token" property="accessToken" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -65,7 +66,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, user_id, facebook_id
+    id, user_id, facebook_id, access_token
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.peru.dal.UserAccountDOCriteria" >
     select
@@ -102,8 +103,10 @@
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into user_account (user_id, facebook_id)
-    values (#{userId,jdbcType=INTEGER}, #{facebookId,jdbcType=VARCHAR})
+    insert into user_account (user_id, facebook_id, access_token
+      )
+    values (#{userId,jdbcType=INTEGER}, #{facebookId,jdbcType=VARCHAR}, #{accessToken,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.peru.dal.UserAccountDO" >
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
@@ -117,6 +120,9 @@
       <if test="facebookId != null" >
         facebook_id,
       </if>
+      <if test="accessToken != null" >
+        access_token,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="userId != null" >
@@ -124,6 +130,9 @@
       </if>
       <if test="facebookId != null" >
         #{facebookId,jdbcType=VARCHAR},
+      </if>
+      <if test="accessToken != null" >
+        #{accessToken,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -145,6 +154,9 @@
       <if test="record.facebookId != null" >
         facebook_id = #{record.facebookId,jdbcType=VARCHAR},
       </if>
+      <if test="record.accessToken != null" >
+        access_token = #{record.accessToken,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -154,7 +166,8 @@
     update user_account
     set id = #{record.id,jdbcType=INTEGER},
       user_id = #{record.userId,jdbcType=INTEGER},
-      facebook_id = #{record.facebookId,jdbcType=VARCHAR}
+      facebook_id = #{record.facebookId,jdbcType=VARCHAR},
+      access_token = #{record.accessToken,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -168,13 +181,17 @@
       <if test="facebookId != null" >
         facebook_id = #{facebookId,jdbcType=VARCHAR},
       </if>
+      <if test="accessToken != null" >
+        access_token = #{accessToken,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.peru.dal.UserAccountDO" >
     update user_account
     set user_id = #{userId,jdbcType=INTEGER},
-      facebook_id = #{facebookId,jdbcType=VARCHAR}
+      facebook_id = #{facebookId,jdbcType=VARCHAR},
+      access_token = #{accessToken,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select resultMap="BaseResultMap" parameterType="com.peru.dal.UserAccountDOCriteria" id="selectByExampleWithRowbounds" >

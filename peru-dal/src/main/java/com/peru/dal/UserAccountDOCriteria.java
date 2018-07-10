@@ -293,6 +293,76 @@ public class UserAccountDOCriteria {
             addCriterion("facebook_id not between", value1, value2, "facebookId");
             return (Criteria) this;
         }
+
+        public Criteria andAccessTokenIsNull() {
+            addCriterion("access_token is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessTokenIsNotNull() {
+            addCriterion("access_token is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessTokenEqualTo(String value) {
+            addCriterion("access_token =", value, "accessToken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessTokenNotEqualTo(String value) {
+            addCriterion("access_token <>", value, "accessToken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessTokenGreaterThan(String value) {
+            addCriterion("access_token >", value, "accessToken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessTokenGreaterThanOrEqualTo(String value) {
+            addCriterion("access_token >=", value, "accessToken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessTokenLessThan(String value) {
+            addCriterion("access_token <", value, "accessToken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessTokenLessThanOrEqualTo(String value) {
+            addCriterion("access_token <=", value, "accessToken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessTokenLike(String value) {
+            addCriterion("access_token like", value, "accessToken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessTokenNotLike(String value) {
+            addCriterion("access_token not like", value, "accessToken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessTokenIn(List<String> values) {
+            addCriterion("access_token in", values, "accessToken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessTokenNotIn(List<String> values) {
+            addCriterion("access_token not in", values, "accessToken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessTokenBetween(String value1, String value2) {
+            addCriterion("access_token between", value1, value2, "accessToken");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessTokenNotBetween(String value1, String value2) {
+            addCriterion("access_token not between", value1, value2, "accessToken");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
