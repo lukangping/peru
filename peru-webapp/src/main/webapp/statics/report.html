@@ -9,14 +9,30 @@
     <link href="/css/common/bootstrap.min.css?v=3.3.5" rel="stylesheet">
     <link href="/css/common/bootstrap-table.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
-    <base target="_blank">
     <script src="/js/common/jquery.min.js?v=2.1.4"></script>
     <script src="/js/common/bootstrap-table.min.js"></script>
     <script src="/js/report.js"></script>
+    <script src="/js/logout.js"></script>
     <script src="/js/layer/laydate/laydate.js"></script>
     <script src="/js/layer/layer/layer.js"></script>
 </head>
 <body class="gray-bg">
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand">PERU</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li><a href="/my.html" target="_self">My</a></li>
+            <li class="active"><a href="/report.html" target="_self">Report</a></li>
+            <!--<li><a href="#">Admin</a></li>-->
+            <li><a href="/about.html" target="_self">About</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="javascript:void(0)" onclick="logout();"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+        </ul>
+    </div>
+</nav>
 <div class="wrapper-content ">
     <div class="ibox-content">
         <form class="form-horizontal" id="reportForm">

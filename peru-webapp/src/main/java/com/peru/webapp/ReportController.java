@@ -1,5 +1,7 @@
 package com.peru.webapp;
 
+import com.peru.dal.ReportDailyDO;
+import com.peru.dal.ReportDailyDOCriteria;
 import com.peru.dal.ReportDailyDOMapper;
 import com.peru.dal.ReportHourlyDO;
 import com.peru.dal.ReportHourlyDOCriteria;
@@ -39,5 +41,20 @@ public class ReportController {
     List<ReportHourlyDO> reportHourlyDOs = reportHourlyDOMapper.selectByExample(reportHourlyDOCriteria);
 
     return reportHourlyDOs;
+  }
+
+  @RequestMapping(value = "/query/daily", method = RequestMethod.GET)
+  @ResponseBody
+  public List<ReportDailyDO> queryDaily(String facebook_id, String start_date, String start_hour,
+                                    String end_date, String end_hour) {
+
+    ReportDailyDOCriteria reportDailyDOCriteria = new ReportDailyDOCriteria();
+    ReportDailyDOCriteria.Criteria criteria = reportDailyDOCriteria.createCriteria();
+    criteria.andFacebookIdEqualTo(facebook_id);
+    criteria.andDateGreaterThanOrEqualTo(Integer.parseInt(start_date));
+    criteria.andDateLessThanOrEqualTo(Integer.parseInt(end_date));
+    List<ReportDailyDO> reportDailyDOs = reportDailyDOMapper.selectByExample(reportDailyDOCriteria);
+
+    return reportDailyDOs;
   }
 }

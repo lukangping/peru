@@ -34,7 +34,7 @@ function report(){
     $('#ad_records').bootstrapTable('destroy');
     $('#ad_records').bootstrapTable({
         // url: '../../js/static/specialManagement/specialManagement.json', // 请求后台的URL（*）
-        url: '/query', // 请求后台的URL（*）
+        url: '/query/daily', // 请求后台的URL（*）
         method: 'get', // 请求方式（*）
         //toolbar: '#toolbar', // 工具按钮用哪个容器
         striped: true, // 是否显示行间隔色
@@ -72,9 +72,39 @@ function report(){
         }, {
             field: 'adsetId',
             title: 'Adset'
+        },{
+            field: 'date',
+            title: 'Date'
         }, {
             field: 'gmv',
             title: 'GMV'
+        }, {
+            field: 'spend',
+            title: 'Spend'
+        }, {
+            field: 'budget',
+            title: 'Budget'
+        }, {
+            field: 'impressions',
+            title: 'Impressions'
+        }, {
+            field: 'frequency',
+            title: 'Frequency'
+        }, {
+            field: 'reachs',
+            title: 'Reaches'
+        }, {
+            field: 'clicks',
+            title: 'Clicks'
+        }, {
+            field: 'purchases',
+            title: 'Purchases'
+        }, {
+            field: 'cost_general',
+            title: 'Cost_General'
+        }, {
+            field: 'cost_purchasing',
+            title: 'Cost_Purchasing'
         }]
     });
 

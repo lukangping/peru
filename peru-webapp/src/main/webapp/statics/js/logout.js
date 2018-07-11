@@ -1,14 +1,15 @@
-function login(){
+function logout(){
     $.ajax({
-        type: "POST",
-        url:  "/login",
-        data:  {email:$("#inputEmail").val(), password:$("#inputPassword").val()},
+        type: "GET",
+        url:  "/logout",
         success: function(data) {
-            location.href = "/my.html"
+            location.href = "/index.html"
         } ,
         error: function(jqXHR, textStatus, errorThrown){
             var msg = JSON.stringify(jqXHR);
             alert(msg);
         }
     });
-}
+}/**
+ * Created by roger.lu on 2018/7/12.
+ */

@@ -68,4 +68,13 @@ public class LoginController {
 
   }
 
+  @RequestMapping(value="/logout", method= RequestMethod.GET)
+  @ResponseBody
+  public String doLogout(HttpServletResponse response, HttpSession session){
+
+    session.removeAttribute(Constants.SESSION_USERID);
+    return "success";
+
+  }
+
 }
