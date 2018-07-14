@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -54,6 +55,25 @@ public class ReportController {
     criteria.andDateGreaterThanOrEqualTo(Integer.parseInt(start_date));
     criteria.andDateLessThanOrEqualTo(Integer.parseInt(end_date));
     List<ReportDailyDO> reportDailyDOs = reportDailyDOMapper.selectByExample(reportDailyDOCriteria);
+
+    for (ReportDailyDO reportDailyDO : reportDailyDOs) {
+
+      BigDecimal gmv = reportDailyDO.getGmv();
+      BigDecimal generalCost = reportDailyDO.getCostGeneral();
+      BigDecimal vendorCost = reportDailyDO.getCostPurchasing();
+      BigDecimal spend = reportDailyDO.getSpend();
+
+      if (null != gmv && null != generalCost && null != vendorCost && null != spend) {
+        BigDecimal earning = gmv.subtract(generalCost).subtract(vendorCost).subtract(spend);
+        BigDecimal profit = gmv.subtract(generalCost).subtract(vendorCost);
+        float roi = profit.floatValue() / spend.floatValue();
+
+        reportDailyDO.setEarning(earning);
+        reportDailyDO.setRoi(roi);
+
+      }
+
+    }
 
     return reportDailyDOs;
   }

@@ -33,9 +33,29 @@ public class ReportDailyDO implements Serializable {
 
     private BigDecimal costPurchasing;
 
+    private BigDecimal earning;
+
+    private Float roi;
+
     private Date updateTime;
 
-    private static final long serialVersionUID = 1L;
+  public BigDecimal getEarning() {
+    return earning;
+  }
+
+  public void setEarning(BigDecimal earning) {
+    this.earning = earning;
+  }
+
+  public Float getRoi() {
+    return roi;
+  }
+
+  public void setRoi(Float roi) {
+    this.roi = roi;
+  }
+
+  private static final long serialVersionUID = 1L;
 
     public Integer getId() {
         return id;

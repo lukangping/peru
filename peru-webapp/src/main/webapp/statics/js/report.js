@@ -67,15 +67,18 @@ function report(){
         //    return res;
         //},
         columns: [{
-            field: 'facebookId',
-            title: 'Facebook Account'
-        }, {
             field: 'adsetId',
             title: 'Adset'
         },{
             field: 'date',
             title: 'Date'
         }, {
+            field: 'earning',
+            title: 'Earning'
+        },{
+            field: 'roi',
+            title: 'ROI'
+        },{
             field: 'gmv',
             title: 'GMV'
         }, {
@@ -100,11 +103,11 @@ function report(){
             field: 'purchases',
             title: 'Purchases'
         }, {
-            field: 'cost_general',
+            field: 'costGeneral',
             title: 'Cost_General'
         }, {
-            field: 'cost_purchasing',
-            title: 'Cost_Purchasing'
+            field: 'costPurchasing',
+            title: 'Cost_Vendor'
         }]
     });
 

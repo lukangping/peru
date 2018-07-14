@@ -7,6 +7,7 @@ import com.facebook.ads.sdk.APIRequest;
 import com.facebook.ads.sdk.APIResponse;
 import com.facebook.ads.sdk.AdAccount;
 import com.facebook.ads.sdk.AdSet;
+import com.facebook.ads.sdk.AdsActionStats;
 import com.facebook.ads.sdk.AdsInsights;
 import com.facebook.ads.sdk.Campaign;
 import com.google.common.collect.Maps;
@@ -29,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -47,7 +49,7 @@ public class ScheduleController {
 
   @RequestMapping(value = "/schedule/daily", method = RequestMethod.GET)
   @ResponseBody
-  public String doGet(String sinceDay, String utilDay) throws APIException, ParseException {
+  public String doGet(String sinceDay, String utilDay) throws APIException, ParseException, InterruptedException {
 
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     Date sinceDate = df.parse(sinceDay);
@@ -79,56 +81,121 @@ public class ScheduleController {
         logger.info("to import adAccount {}.", adAccount.getId());
 
         APIRequest<AdSet> adsetsRequest = new APIRequest<AdSet>(context, "act_" + adAccount.getId(), "/adsets", "GET", AdSet.getParser());
-        APIResponse adsetsResponse = adsetsRequest.execute();
+        HashMap<String, Object> adsetsParams = Maps.newHashMap();
+        adsetsParams.put("fields", "daily_budget");
+        adsetsParams.put("effective_status", "[\"ACTIVE\", \"PENDING_REVIEW\"]");
+        adsetsParams.put("limit", "1000");
+        APIResponse adsetsResponse = adsetsRequest.execute(adsetsParams);
         APINodeList<AdSet> adsets = (APINodeList<AdSet>) adsetsResponse;
 
         for (AdSet adSet : adsets) {
 
           logger.info("to import adSet {}.", adSet.getId());
 
-          while (sinceCalendar.before(utilCalendar)) {
+          Calendar inst = Calendar.getInstance();
+          inst.setTime(sinceCalendar.getTime());
 
-            logger.info("to import date {}.", sinceCalendar.getTime());
+
+          while (inst.before(utilCalendar)) {
+
+            logger.info("to import date {}.", inst.getTime());
 
             APIRequest<AdsInsights> insightsRequest = new APIRequest<>(context, adSet.getId(), "/insights", "GET", AdsInsights.getParser());
             HashMap<String, Object> params = Maps.newHashMap();
-            params.put("fields", "impressions,clicks,frequency,reach,spend,total_actions,total_action_value");
+            params.put("fields", "impressions,unique_actions,frequency,reach,spend,actions,action_values");
 
-            String sinceTime = df.format(sinceCalendar.getTime());
-            sinceCalendar.add(Calendar.DAY_OF_MONTH, 1);
-            String utilTime = df.format(sinceCalendar.getTime());
+            String sinceTime = df.format(inst.getTime());
+            inst.add(Calendar.DAY_OF_MONTH, 1);
+            String utilTime = df.format(inst.getTime());
 
             params.put("time_range", "{\"since\":\"" + sinceTime + "\",\"until\":\"" + utilTime + "\"}");
+            params.put("limit", "1000");
 
             String fieldDailyBudget = adSet.getFieldDailyBudget();
             APIResponse insightsResponse = insightsRequest.execute(params);
 
             if (null != insightsResponse) {
               APINodeList<AdsInsights> insights = (APINodeList<AdsInsights>) insightsResponse;
-              for (AdsInsights adsInsights : insights) {
 
-                logger.info("to import insight {}.", adsInsights);
+              while (!insights.isEmpty()){
+                for (AdsInsights adsInsights : insights) {
+                  logger.info("to import insight {}.", adsInsights);
 
-                ReportDailyDO reportDailyDO = new ReportDailyDO();
-                reportDailyDO.setAdsetId(adSet.getId());
-                if (null != fieldDailyBudget) {
-                  reportDailyDO.setBudget(new BigDecimal(fieldDailyBudget));
+                  ReportDailyDO reportDailyDO = new ReportDailyDO();
+                  reportDailyDO.setAdsetId(adSet.getId());
+                  if (null != fieldDailyBudget) {
+                    BigDecimal budget = new BigDecimal(Integer.valueOf(fieldDailyBudget)/100);
+                    budget.setScale(2);
+                    reportDailyDO.setBudget(budget);
+                  }
+
+                  List<AdsActionStats> fieldUniqueActions = adsInsights.getFieldUniqueActions();
+                  if (null != fieldUniqueActions) {
+                    for (AdsActionStats stat : fieldUniqueActions) {
+                      if (stat.getFieldActionType().equals("link_click")) {
+                        reportDailyDO.setClicks(Integer.valueOf(stat.getFieldValue()));
+                      }
+                    }
+                  }
+
+                  reportDailyDO.setDate(Integer.valueOf(sinceTime.replaceAll("-", "")));
+                  reportDailyDO.setFacebookId(userAccountDO.getFacebookId());
+                  reportDailyDO.setImpressions(Integer.valueOf(adsInsights.getFieldImpressions()));
+                  reportDailyDO.setFrequency(Float.valueOf(adsInsights.getFieldFrequency()));
+                  reportDailyDO.setReachs(Integer.valueOf(adsInsights.getFieldReach()));
+
+                  List<AdsActionStats> actionsStats = adsInsights.getFieldActions();
+                  if (null != actionsStats) {
+                    for (AdsActionStats stat : actionsStats) {
+                      if (stat.getFieldActionType().equals("offsite_conversion.fb_pixel_purchase")) {
+                        reportDailyDO.setPurchases(Integer.valueOf(stat.getFieldValue()));
+                      }
+                    }
+                  }
+
+                  BigDecimal gmv = null;
+                  BigDecimal generalCost = null;
+                  BigDecimal vendorCost = null;
+                  List<AdsActionStats> fieldActionValues = adsInsights.getFieldActionValues();
+                  if (null != fieldActionValues) {
+                    for (AdsActionStats stat : fieldActionValues) {
+                      if (stat.getFieldActionType().equals("offsite_conversion.fb_pixel_purchase")) {
+                        gmv = new BigDecimal(stat.getFieldValue());
+                        gmv.setScale(2);
+                        reportDailyDO.setGmv(gmv);
+                        generalCost = gmv.multiply(new BigDecimal(0.1));
+                        generalCost = generalCost.setScale(2, BigDecimal.ROUND_DOWN);
+                        reportDailyDO.setCostGeneral(generalCost);
+
+                        vendorCost = gmv.multiply(new BigDecimal(0.47));
+                        vendorCost = vendorCost.setScale(2, BigDecimal.ROUND_DOWN);
+                        reportDailyDO.setCostPurchasing(vendorCost);
+
+                      }
+                    }
+                  }
+
+                  BigDecimal spend = null;
+                  if (null != adsInsights.getFieldSpend()) {
+                    spend = new BigDecimal(adsInsights.getFieldSpend());
+                    spend.setScale(2);
+                    reportDailyDO.setSpend(spend);
+                  }
+
+                  reportDailyDO.setUpdateTime(new Date());
+
+                  reportDailyDOMapper.insert(reportDailyDO);
+
                 }
-                reportDailyDO.setClicks(Integer.valueOf(adsInsights.getFieldClicks()));
-                reportDailyDO.setDate(Integer.valueOf(sinceTime.replaceAll("-", "")));
-                reportDailyDO.setFacebookId(userAccountDO.getFacebookId());
-                reportDailyDO.setImpressions(Integer.valueOf(adsInsights.getFieldImpressions()));
-                reportDailyDO.setFrequency(Float.valueOf(adsInsights.getFieldFrequency()));
-                reportDailyDO.setReachs(Integer.valueOf(adsInsights.getFieldReach()));
-                if (null != adsInsights.getFieldSpend()) {
-                  reportDailyDO.setSpend(new BigDecimal(adsInsights.getFieldSpend()));
-                }
-                reportDailyDO.setUpdateTime(new Date());
 
-                reportDailyDOMapper.insert(reportDailyDO);
+//                Thread.sleep(1000);
+                insights = insights.nextPage();
 
               }
+
             }
+
+
           }
         }
       }
@@ -141,36 +208,47 @@ public class ScheduleController {
 
   public static void main(String[] args) throws APIException {
 
-    APIContext context = new APIContext("EAAFzrZCeZBHoIBAJ2ZCpuZBY20voFvV9nXrhX1IDKuqdqNfA0hcPj0nEjf6cfAclYmcYhgVTTD8V0wGXgMgUb6kxgRZCoYccCglEbljI29Hahhhw8SEZAdXHFPnieyBRzMG9kbn5EihxRo3ptVZBHZCyNMWW8LhJCvGrpfO2Gwy28bTSlwqdAclV");
-    APIRequest<AdAccount> adAccountsRequest = new APIRequest<AdAccount>(context,
-      "212380059411381", "/adaccounts", "GET", AdAccount.getParser());
-    APIResponse response = adAccountsRequest.execute();
-    APINodeList<AdAccount> adAccounts = (APINodeList<AdAccount>) response;
-    for (AdAccount adAccount : adAccounts) {
-      System.out.println(adAccount);
+    String a = "1.23";
+    BigDecimal budget = new BigDecimal(a);
+    budget.setScale(2);
 
-      APIRequest<AdSet> adsetsRequest = new APIRequest<AdSet>(context, "act_" + adAccount.getId(), "/adsets", "GET", AdSet.getParser());
-      HashMap<String, Object> adsetsParams = Maps.newHashMap();
-      adsetsParams.put("fields", "fields=name,daily_budget");
-      APIResponse adsetsResponse = adsetsRequest.execute(adsetsParams);
-      APINodeList<AdSet> adsets = (APINodeList<AdSet>) adsetsResponse;
-      for (AdSet adSet : adsets) {
+    BigDecimal multiply = budget.multiply(new BigDecimal(0.1));
+    multiply = multiply.setScale(2, BigDecimal.ROUND_UP);
 
-        System.out.println(adSet.getId());
-
-        APIRequest<AdsInsights> insightsRequest = new APIRequest<>(context, adSet.getId(), "/insights", "GET", AdsInsights.getParser());
-        HashMap<String, Object> params = Maps.newHashMap();
-        params.put("fields", "impressions,clicks,frequency,reach,spend,total_actions,total_action_value");
-        params.put("time_range", "{\"since\":\"2018-03-01\",\"until\":\"2018-04-01\"}");
-        String fieldDailyBudget = adSet.getFieldDailyBudget();
-        System.out.println(fieldDailyBudget);
-
-        APIResponse insightsResponse = insightsRequest.execute(params);
-        System.out.println(insightsResponse);
+    System.out.println(budget);
+    System.out.println(multiply);
 
 
-      }
-    }
+//    APIContext context = new APIContext("EAAFzrZCeZBHoIBAJ2ZCpuZBY20voFvV9nXrhX1IDKuqdqNfA0hcPj0nEjf6cfAclYmcYhgVTTD8V0wGXgMgUb6kxgRZCoYccCglEbljI29Hahhhw8SEZAdXHFPnieyBRzMG9kbn5EihxRo3ptVZBHZCyNMWW8LhJCvGrpfO2Gwy28bTSlwqdAclV");
+//    APIRequest<AdAccount> adAccountsRequest = new APIRequest<AdAccount>(context,
+//      "212380059411381", "/adaccounts", "GET", AdAccount.getParser());
+//    APIResponse response = adAccountsRequest.execute();
+//    APINodeList<AdAccount> adAccounts = (APINodeList<AdAccount>) response;
+//    for (AdAccount adAccount : adAccounts) {
+//      System.out.println(adAccount);
+//
+//      APIRequest<AdSet> adsetsRequest = new APIRequest<AdSet>(context, "act_" + adAccount.getId(), "/adsets", "GET", AdSet.getParser());
+//      HashMap<String, Object> adsetsParams = Maps.newHashMap();
+//      adsetsParams.put("fields", "fields=name,daily_budget");
+//      APIResponse adsetsResponse = adsetsRequest.execute(adsetsParams);
+//      APINodeList<AdSet> adsets = (APINodeList<AdSet>) adsetsResponse;
+//      for (AdSet adSet : adsets) {
+//
+//        System.out.println(adSet.getId());
+//
+//        APIRequest<AdsInsights> insightsRequest = new APIRequest<>(context, adSet.getId(), "/insights", "GET", AdsInsights.getParser());
+//        HashMap<String, Object> params = Maps.newHashMap();
+//        params.put("fields", "impressions,clicks,frequency,reach,spend,total_actions,total_action_value");
+//        params.put("time_range", "{\"since\":\"2018-03-01\",\"until\":\"2018-04-01\"}");
+//        String fieldDailyBudget = adSet.getFieldDailyBudget();
+//        System.out.println(fieldDailyBudget);
+//
+//        APIResponse insightsResponse = insightsRequest.execute(params);
+//        System.out.println(insightsResponse);
+//
+//
+//      }
+//    }
 
   }
 
