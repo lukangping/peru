@@ -12,10 +12,12 @@ import com.facebook.ads.sdk.AdsInsights;
 import com.facebook.ads.sdk.Campaign;
 import com.google.common.collect.Maps;
 import com.peru.dal.ReportDailyDO;
+import com.peru.dal.ReportDailyDOCriteria;
 import com.peru.dal.ReportDailyDOMapper;
 import com.peru.dal.UserAccountDO;
 import com.peru.dal.UserAccountDOCriteria;
 import com.peru.dal.UserAccountDOMapper;
+import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,15 +53,17 @@ public class ScheduleController {
   @ResponseBody
   public String doGet(String sinceDay, String utilDay) throws APIException, ParseException, InterruptedException {
 
-    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-    Date sinceDate = df.parse(sinceDay);
-    Date utilDate = df.parse(utilDay);
-
-    Calendar sinceCalendar = Calendar.getInstance();
-    sinceCalendar.setTime(sinceDate);
-
     Calendar utilCalendar = Calendar.getInstance();
-    utilCalendar.setTime(utilDate);
+    Calendar sinceCalendar = Calendar.getInstance();
+    sinceCalendar.add(Calendar.DAY_OF_MONTH, -1);
+
+    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    if (Strings.isNotBlank(utilDay) && Strings.isNotBlank(sinceDay)) {
+      Date sinceDate = df.parse(sinceDay);
+      Date utilDate = df.parse(utilDay);
+      sinceCalendar.setTime(sinceDate);
+      utilCalendar.setTime(utilDate);
+    }
 
     UserAccountDOCriteria userAccountDOCriteria = new UserAccountDOCriteria();
     UserAccountDOCriteria.Criteria criteria = userAccountDOCriteria.createCriteria();
@@ -117,14 +121,14 @@ public class ScheduleController {
             if (null != insightsResponse) {
               APINodeList<AdsInsights> insights = (APINodeList<AdsInsights>) insightsResponse;
 
-              while (!insights.isEmpty()){
+//              while (!insights.isEmpty()) {
                 for (AdsInsights adsInsights : insights) {
                   logger.info("to import insight {}.", adsInsights);
 
                   ReportDailyDO reportDailyDO = new ReportDailyDO();
                   reportDailyDO.setAdsetId(adSet.getId());
                   if (null != fieldDailyBudget) {
-                    BigDecimal budget = new BigDecimal(Integer.valueOf(fieldDailyBudget)/100);
+                    BigDecimal budget = new BigDecimal(Integer.valueOf(fieldDailyBudget) / 100);
                     budget.setScale(2);
                     reportDailyDO.setBudget(budget);
                   }
@@ -153,6 +157,10 @@ public class ScheduleController {
                     }
                   }
 
+                  if (null == reportDailyDO.getPurchases()) {
+                    reportDailyDO.setPurchases(0);
+                  }
+
                   BigDecimal gmv = null;
                   BigDecimal generalCost = null;
                   BigDecimal vendorCost = null;
@@ -175,6 +183,12 @@ public class ScheduleController {
                     }
                   }
 
+                  if (null == reportDailyDO.getGmv()) {
+                    reportDailyDO.setGmv(new BigDecimal(0));
+                    reportDailyDO.setCostGeneral(new BigDecimal(0));
+                    reportDailyDO.setCostPurchasing(new BigDecimal(0));
+                  }
+
                   BigDecimal spend = null;
                   if (null != adsInsights.getFieldSpend()) {
                     spend = new BigDecimal(adsInsights.getFieldSpend());
@@ -184,14 +198,22 @@ public class ScheduleController {
 
                   reportDailyDO.setUpdateTime(new Date());
 
-                  reportDailyDOMapper.insert(reportDailyDO);
+                  ReportDailyDOCriteria reportDailyDOCriteria = new ReportDailyDOCriteria();
+                  ReportDailyDOCriteria.Criteria reportCriteria = reportDailyDOCriteria.createCriteria();
+                  reportCriteria.andDateEqualTo(Integer.valueOf(sinceTime.replaceAll("-", "")));
+                  reportCriteria.andFacebookIdEqualTo(userAccountDO.getFacebookId());
+                  reportCriteria.andAdsetIdEqualTo(adSet.getId());
+                  List<ReportDailyDO> reportDailyDOs = reportDailyDOMapper.selectByExample(reportDailyDOCriteria);
+                  if (null == reportDailyDO || reportDailyDOs.isEmpty()) {
+                    reportDailyDOMapper.insert(reportDailyDO);
+                  }
 
                 }
 
 //                Thread.sleep(1000);
-                insights = insights.nextPage();
+//                insights = insights.nextPage(1000);
 
-              }
+//              }
 
             }
 
@@ -208,15 +230,21 @@ public class ScheduleController {
 
   public static void main(String[] args) throws APIException {
 
-    String a = "1.23";
-    BigDecimal budget = new BigDecimal(a);
-    budget.setScale(2);
+    Calendar instance = Calendar.getInstance();
 
-    BigDecimal multiply = budget.multiply(new BigDecimal(0.1));
-    multiply = multiply.setScale(2, BigDecimal.ROUND_UP);
+    instance.add(Calendar.DAY_OF_MONTH, -16);
 
-    System.out.println(budget);
-    System.out.println(multiply);
+    System.out.println(instance.getTime());
+
+//    String a = "1.23";
+//    BigDecimal budget = new BigDecimal(a);
+//    budget.setScale(2);
+//
+//    BigDecimal multiply = budget.multiply(new BigDecimal(0.1));
+//    multiply = multiply.setScale(2, BigDecimal.ROUND_UP);
+//
+//    System.out.println(budget);
+//    System.out.println(multiply);
 
 
 //    APIContext context = new APIContext("EAAFzrZCeZBHoIBAJ2ZCpuZBY20voFvV9nXrhX1IDKuqdqNfA0hcPj0nEjf6cfAclYmcYhgVTTD8V0wGXgMgUb6kxgRZCoYccCglEbljI29Hahhhw8SEZAdXHFPnieyBRzMG9kbn5EihxRo3ptVZBHZCyNMWW8LhJCvGrpfO2Gwy28bTSlwqdAclV");

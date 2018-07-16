@@ -69,7 +69,7 @@ public class ReportController {
         float roi = profit.floatValue() / spend.floatValue();
 
         reportDailyDO.setEarning(earning);
-        reportDailyDO.setRoi(roi);
+        reportDailyDO.setRoi(Float.valueOf(String.format("%.2f", roi)));
 
       }
 
